@@ -1,0 +1,69 @@
+{% load static %}
+<head>
+  <link rel="shortcut icon" type="image/png" href="{% static 'logo/favicon.ico' %}"/> 
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <style> 
+    body{
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-space {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 400;
+      }
+    .font-space-bold {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      }
+  </style>
+  <title>About Me</title> 
+</head>
+
+
+<body>
+  <div class="absolute text-white text-center" style="top: 50%; transform: translate(-50%, -50%); left: 50%;">
+  <h1 class="font-space text-sm uppercase tracking-wide text-2xl">
+    Austin Guter
+  </h1>
+  <p class="font-space-bold uppercase text-4xl mt-2">
+    Structural Engineer, Hobbyist Programmer, Skier
+  </p>
+  <a
+    href="{% url 'blog-home' %}"
+    class="border px-4 py-2 rounded-lg text-sm font-space-mono uppercase mt-8 hover:bg-white hover:text-gray-800 inline-block"
+  >
+    Blog
+  </a>
+  <button class="border px-4 py-2 rounded-lg text-sm font-space-mono uppercase mt-8 hover:bg-white hover:text-gray-800 inline-block">
+  Email - austinguter@gmail
+  </button>
+  <a
+  href="https://github.com/retug"
+  class="border px-4 py-2 rounded-lg text-sm font-space-mono uppercase mt-8 hover:bg-white hover:text-gray-800 inline-block"
+>
+  Github
+</a>
+
+</div>
+</body>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three" : "https://unpkg.com/three@0.126.1/build/three.module.js",
+      "orbitcontrols" : "https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js" 
+    }
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js" ></script>
+<script type="module" src="{% static 'blog/threeBackground.js' %}"></script>
+
