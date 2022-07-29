@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Concrete Design</title>
+    <style>
+      body {
+        margin: 0;
+        font-family:  sans-serif;
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background: red;
+      }
+      main {
+        margin-left: 250px
+        
+      }
+      .column {
+        
+        float: left;
+        width: 50%;
+        text-align: center;
+      }
+      .form-example {
+        width: 125px;
+      }
+      td, th {
+        border: 1px solid #cccccc;
+        padding: 10px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .selectBox {
+				border: 1px solid #55aaff;
+				background-color: rgba(75, 160, 255, 0.3);
+				position: fixed;
+			}
+    </style>
+  <!-- float is required to make nav bar side-by-side -->
+  </head>
+  <body>
+    <nav>
+      <div class="row">
+        <div class="column" style="background-color: rgb(92, 43, 226);">
+          <h2>X</h2>
+          <div class="form-example">
+            <form action="" method="get" class="form-example">
+              <div class="form-example">
+                <label for="X"></label>
+                <input type="number" step="0.01" name="X" id="X_Vals" style="width: 125px;" required>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="column" style="background-color: royalblue;">
+          <h2>Y</h2>
+          <div class="row">
+            <form action="" method="get" class="form-example"></form>
+            <label for="Y"></label>
+            <input type="number" step="0.01" name="Y" id="Y_Vals" style="width: 125px;" required>
+          </div>
+        </div>
+      </div>
+      <button id="addPointBtn">Add Point to Scene</button>
+      <table>
+        <thead>
+          <th>X</th>
+          <th>Y</th>
+        </thead>
+        <tbody id="pointData"></tbody>
+      </table>
+
+    </nav>
+    <main id="GUI">
+      <h1>MAKING POINTS</h1>
+    </main>
+    <div id="app"></div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
