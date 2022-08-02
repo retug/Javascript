@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Concrete Design</title>
+    <link href="tailwind.css" rel="stylesheet">
     <style>
       body {
         margin: 0;
@@ -49,42 +50,44 @@
   <!-- float is required to make nav bar side-by-side -->
   </head>
   <body>
-    <nav>
-      <div class="row">
-        <div class="column" style="background-color: rgb(92, 43, 226);">
-          <h2>X</h2>
-          <div class="form-example">
-            <form action="" method="get" class="form-example">
-              <div class="form-example">
-                <label for="X"></label>
-                <input type="number" step="0.01" name="X" id="X_Vals" style="width: 125px;" required>
-              </div>
-            </form>
+    <div class="flex h-screen" >
+      <div class="w-1/6">
+        <div class="row">
+          <div class="column" style="background-color: rgb(92, 43, 226);">
+            <h2>X</h2>
+            <div class="form-example">
+              <form action="" method="get" class="form-example">
+                <div class="form-example">
+                  <label for="X"></label>
+                  <input type="number" step="0.1" name="X" id="X_Vals" style="width: 80%" required>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="column" style="background-color: royalblue;">
+            <h2>Y</h2>
+            <div class="row">
+              <form action="" method="get" class="form-example"></form>
+              <label for="Y"></label>
+              <input type="number" step="0.1" name="Y" id="Y_Vals" style="width: 80%" required>
+            </div>
           </div>
         </div>
-        <div class="column" style="background-color: royalblue;">
-          <h2>Y</h2>
-          <div class="row">
-            <form action="" method="get" class="form-example"></form>
-            <label for="Y"></label>
-            <input type="number" step="0.01" name="Y" id="Y_Vals" style="width: 125px;" required>
-          </div>
-        </div>
+        <button id="addPointBtn">Add Point to Scene</button>
+        <table>
+          <thead>
+            <th>X</th>
+            <th>Y</th>
+          </thead>
+          <tbody id="pointData"></tbody>
+        </table>
       </div>
-      <button id="addPointBtn">Add Point to Scene</button>
-      <table>
-        <thead>
-          <th>X</th>
-          <th>Y</th>
-        </thead>
-        <tbody id="pointData"></tbody>
-      </table>
-
-    </nav>
-    <main id="GUI">
-      <h1>MAKING POINTS</h1>
-    </main>
-    <div id="app"></div>
+    <div class="w-5/6" id="concGui">
+      <canvas></canvas>
+    </div>
+  </div>
+    
+    
     <script type="module" src="/main.js"></script>
   </body>
 </html>
