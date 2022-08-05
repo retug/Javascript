@@ -57,6 +57,12 @@ const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
 
 //beginning comand
 document.addEventListener( 'pointerdown', function ( event ) {
+  //this resets all the colors of the selection box
+  for ( const item of selectionBox.collection ) {
+
+    item.material.color.set( 0x00FF00 );
+
+  }
 
 // #1 1/6 for coordinates on left hand side of screen
   selectionBox.startPoint.set(
@@ -114,13 +120,9 @@ document.addEventListener( 'pointerup', function ( event ) {
     else {
       //reset all the points to original color
       allSelected[ i ].material.color.set( 0x00FF00);
-    }
-      
-      
+    }      
   }
-
 } );
-
 // add point function
 function addPoint() {
   var X1 = document.getElementById( "X_Vals" ).value;
