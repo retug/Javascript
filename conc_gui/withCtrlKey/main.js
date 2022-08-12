@@ -69,12 +69,11 @@ document.addEventListener( 'pointerdown', function ( event ) {
   }
   else {
     // reset the color of all points when control is not held down
-    allSelectedPnts = []
-    for ( const item of selectionBox.collection ) {
-      if (item.constructor.name == "Points") {
-  
-        item.material.color.set( 0x00FF00 );
+
+    for ( const pnt of allSelectedPnts ) {
+      pnt.material.color.set( 0x00FF00 );
     }
+    allSelectedPnts = []
     //reset the selected points array
     selectionBox.startPoint.set(
       ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
@@ -83,7 +82,6 @@ document.addEventListener( 'pointerdown', function ( event ) {
       // logs x and y position of cursor
       //console.log(((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1)
       //console.log(-( event.clientY / concGui.offsetHeight )*2+1)
-  }
   }
 } );
 
