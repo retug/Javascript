@@ -58,9 +58,10 @@ const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
 
 //beginning comand 
 //#1
+var allSelectedPnts = []
 document.addEventListener( 'pointerdown', function ( event ) {
   if (event.ctrlKey) {
-    var allSelectedPnts = event.target.allSelectedPnts
+    console.log(allSelectedPnts)
     selectionBox.startPoint.set(
       ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
       - ( event.clientY / concGui.offsetHeight )*2+1,
@@ -68,13 +69,13 @@ document.addEventListener( 'pointerdown', function ( event ) {
   }
   else {
     // reset the color of all points when control is not held down
+    allSelectedPnts = []
     for ( const item of selectionBox.collection ) {
       if (item.constructor.name == "Points") {
   
         item.material.color.set( 0x00FF00 );
     }
     //reset the selected points array
-    var allSelectedPnts = []
     selectionBox.startPoint.set(
       ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
       - ( event.clientY / concGui.offsetHeight )*2+1,
@@ -91,7 +92,6 @@ document.addEventListener( 'pointerdown', function ( event ) {
 //#2
 document.addEventListener( 'pointermove', function ( event ) {
   if (event.ctrlKey) {
-    var allSelectedPnts = event.target.allSelectedPnts
     if ( helper.isDown ) {
       selectionBox.endPoint.set(
         ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
@@ -102,14 +102,12 @@ document.addEventListener( 'pointermove', function ( event ) {
     //this is the color for when you are mouse dragging  
     for ( let i = 0; i < allSelected.length; i ++ ) {
       if (allSelected[ i ].constructor.name == "Points") {
-        allSelectedPnts.push(allSelected[i])
       //selected point is 0xFF7F00
         allSelected[ i ].material.color.set( 0xFF7F00);        
       }
     }
   }
   else {
-    var allSelectedPnts = []
     if ( helper.isDown ) {
       selectionBox.endPoint.set(
         ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
@@ -120,7 +118,6 @@ document.addEventListener( 'pointermove', function ( event ) {
       //this is the color for when you are mouse dragging  
       for ( let i = 0; i < allSelected.length; i ++ ) {
         if (allSelected[ i ].constructor.name == "Points") {
-          allSelectedPnts.push(allSelected[i])
           //selected point is 0xFF7F00
           allSelected[ i ].material.color.set( 0xFF7F00);        
         }
@@ -134,7 +131,6 @@ document.addEventListener( 'pointermove', function ( event ) {
 document.addEventListener( 'pointerup', function ( event ) {
   // we are adding points to the previously constructed list
   if (event.ctrlKey) {
-    var allSelectedPnts = event.target.allSelectedPnts
     selectionBox.endPoint.set(
       ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
       - ( event.clientY / concGui.offsetHeight)*2+1,
@@ -151,7 +147,6 @@ document.addEventListener( 'pointerup', function ( event ) {
     }
   }
   else {
-    var allSelectedPnts = []
     selectionBox.endPoint.set(
       ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
       - ( event.clientY / concGui.offsetHeight)*2+1,
