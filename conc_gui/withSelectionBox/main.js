@@ -21,7 +21,7 @@ renderer.setPixelRatio(window.devicePixelRatio)
 var dotGeometry = new THREE.BufferGeometry();
 dotGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [0,0,0], 3 ) );
 var dotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
-var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0xFF7F00 } );
+
 var dot = new THREE.Points( dotGeometry, dotMaterial );
 
 scene.add( dot );
@@ -57,19 +57,22 @@ const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
 
 //beginning comand
 document.addEventListener( 'pointerdown', function ( event ) {
-  //this resets all the colors of the selection box
-  for ( const item of selectionBox.collection ) {
+  //this resets all the points of the selection box
 
-    item.material.color.set( 0x00FF00 );
+  for ( const item of selectionBox.collection ) {
+    if (item.constructor.name == "Points") {
+
+      item.material.color.set( 0x00FF00 );
 
   }
+}
 
 // #1 1/6 for coordinates on left hand side of screen
   selectionBox.startPoint.set(
     ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
     - ( event.clientY / concGui.offsetHeight )*2+1,
     0.5 );
-    //
+    // logs x and y position of cursor
     //console.log(((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1)
     //console.log(-( event.clientY / concGui.offsetHeight )*2+1)
 } );
@@ -77,6 +80,13 @@ document.addEventListener( 'pointerdown', function ( event ) {
 
 //while mouse is moving
 document.addEventListener( 'pointermove', function ( event ) {
+
+
+  // for ( const item of selectionBox.collection ) {
+
+  //   item.material.color.set( 0xFF7F00 );
+
+  // }
 
   if ( helper.isDown ) {
     //#2
@@ -89,9 +99,8 @@ document.addEventListener( 'pointermove', function ( event ) {
     //this is the color for when you are mouse dragging  
     for ( let i = 0; i < allSelected.length; i ++ ) {
       if (allSelected[ i ].constructor.name == "Points") {
-
-        allSelected[ i ].material.color.set( 0xFF7F00);
-        
+        //selected point is 0xFF7F00
+        allSelected[ i ].material.color.set( 0xFF7F00);        
       }
     }
 
@@ -113,23 +122,21 @@ document.addEventListener( 'pointerup', function ( event ) {
   for ( let i = 0; i < allSelected.length; i ++ ) {
     // filtering for points selected
     if (allSelected[ i ].constructor.name == "Points") {
+      //selected point is 0xFF7F00
       allSelected[ i ].material.color.set( 0xFF7F00);
-      allSelected[ i ].geometry.colorsNeedUpdate=true
       console.log(allSelected)
      }
-    else {
-      //reset all the points to original color
-      allSelected[ i ].material.color.set( 0x00FF00);
-    }      
   }
 } );
-// add point function
+// add point function, add a new material for each point
 function addPoint() {
   var X1 = document.getElementById( "X_Vals" ).value;
   var Y1 = document.getElementById( "Y_Vals" ).value;
   var tempDotGeo = new THREE.BufferGeometry();
   tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [X1,Y1,0], 3 ) );
-  var tempDot = new THREE.Points( tempDotGeo, dotMaterial );
+  var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
+
+  var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
   scene.add( tempDot );
 }
 // end point function
