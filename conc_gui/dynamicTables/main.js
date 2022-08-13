@@ -60,103 +60,122 @@ const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
 //beginning comand 
 //#1
 var allSelectedPnts = []
-document.addEventListener( 'pointerdown', function ( event ) {
-  if (event.ctrlKey) {
-    console.log(allSelectedPnts)
-    selectionBox.startPoint.set(
-      ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-      - ( event.clientY / concGui.offsetHeight )*2+1,
-      0.5 );
-  }
-  else {
-    //reset the selected nodes
-    
-    // reset the color of all points when control is not held down
-    for ( const pnt of allSelectedPnts ) {
-      pnt.material.color.set( 0x00FF00 );
-    }
-    allSelectedPnts = []
-    //reset the selected points array
-    selectionBox.startPoint.set(
-      ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-      - ( event.clientY / concGui.offsetHeight )*2+1,
-      0.5 );
-      // logs x and y position of cursor
-      //console.log(((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1)
-      //console.log(-( event.clientY / concGui.offsetHeight )*2+1)
-  }
-} );
 
-
-//while mouse is moving
-//#2
-document.addEventListener( 'pointermove', function ( event ) {
-  if (event.ctrlKey) {
-    if ( helper.isDown ) {
-      selectionBox.endPoint.set(
-        ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-        - ( event.clientY / concGui.offsetHeight )*2+1,
-        0.5 );
-    }
-    const allSelected = selectionBox.select()
-    //this is the color for when you are mouse dragging  
-    for ( let i = 0; i < allSelected.length; i ++ ) {
-      if (allSelected[ i ].constructor.name == "Points") {
-      //selected point is 0xFF7F00
-        allSelected[ i ].material.color.set( 0xFF7F00);        
+const mouse = {
+  x: undefined,
+  y: undefined
+}
+var greater_than = false
+document.addEventListener('mousemove', (event) => {
+  if (event.clientX >= window.innerWidth*1/6) {
+    //#1
+    document.addEventListener( 'pointerdown', function ( event ) {
+      if (event.ctrlKey) {
+        console.log(allSelectedPnts)
+        selectionBox.startPoint.set(
+          ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+          - ( event.clientY / concGui.offsetHeight )*2+1,
+          0.5 );
       }
-    }
-  }
-  else {
-    if ( helper.isDown ) {
-      selectionBox.endPoint.set(
-        ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-        - ( event.clientY / concGui.offsetHeight )*2+1,
-        0.5 );
-      
-      const allSelected = selectionBox.select();
-      //this is the color for when you are mouse dragging  
-      for ( let i = 0; i < allSelected.length; i ++ ) {
-        if (allSelected[ i ].constructor.name == "Points") {
+      else {
+        //reset the selected nodes
+        
+        // reset the color of all points when control is not held down
+        for ( const pnt of allSelectedPnts ) {
+          pnt.material.color.set( 0x00FF00 );
+        }
+        allSelectedPnts = []
+        //reset the selected points array
+        selectionBox.startPoint.set(
+          ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+          - ( event.clientY / concGui.offsetHeight )*2+1,
+          0.5 );
+          // logs x and y position of cursor
+          //console.log(((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1)
+          //console.log(-( event.clientY / concGui.offsetHeight )*2+1)
+      }
+    } );
+
+  
+  //while mouse is moving
+  //#2
+    document.addEventListener( 'pointermove', function ( event ) {
+      if (event.ctrlKey) {
+        if ( helper.isDown ) {
+          selectionBox.endPoint.set(
+            ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+            - ( event.clientY / concGui.offsetHeight )*2+1,
+            0.5 );
+        }
+        const allSelected = selectionBox.select()
+        //this is the color for when you are mouse dragging  
+        for ( let i = 0; i < allSelected.length; i ++ ) {
+          if (allSelected[ i ].constructor.name == "Points") {
           //selected point is 0xFF7F00
-          allSelected[ i ].material.color.set( 0xFF7F00);        
+            allSelected[ i ].material.color.set( 0xFF7F00);        
+          }
         }
       }
-    }
-  }
-} );   
+      else {
+        if ( helper.isDown ) {
+          selectionBox.endPoint.set(
+            ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+            - ( event.clientY / concGui.offsetHeight )*2+1,
+            0.5 );
+          
+          const allSelected = selectionBox.select();
+          //this is the color for when you are mouse dragging  
+          for ( let i = 0; i < allSelected.length; i ++ ) {
+            if (allSelected[ i ].constructor.name == "Points") {
+              //selected point is 0xFF7F00
+              allSelected[ i ].material.color.set( 0xFF7F00);        
+            }
+          }
+        }
+      }
+    } );   
 
-//when you unselect the left mouse
-//#3
-document.addEventListener( 'pointerup', function ( event ) {
-  // we are adding points to the previously constructed list
-  if (event.ctrlKey) {
-    selectionBox.endPoint.set(
-      ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-      - ( event.clientY / concGui.offsetHeight)*2+1,
-      0.5 );
-    const allSelected = selectionBox.select();
-    for ( let i = 0; i < allSelected.length; i ++ ) {
-      // filtering for points selected
-      if (allSelected[ i ].constructor.name == "Points") {
-        allSelectedPnts.push(allSelected[i])
-        //selected point is 0xFF7F00
-        allSelected[ i ].material.color.set( 0xFF7F00);
-        //console.log(allSelectedPnts)
-        //adding to table
-        let table = document.getElementById("pointData")
-        let row = document.createElement('tr');
-        let Xpnt = allSelected[ i ].geometry.attributes.position.array[0] 
-        let Ypnt = allSelected[ i ].geometry.attributes.position.array[1]
-        let Xdata = document.createElement('td')
-        let Ydata = document.createElement('td')
-        Xdata.innerHTML = Xpnt
-        Ydata.innerHTML = Ypnt
-        row.appendChild(Xdata)
-        row.appendChild(Ydata)
-        table.appendChild(row)  
-       }
-    }
+
+
+  //when you unselect the left mouse
+  //#3
+  document.addEventListener( 'pointerup', function ( event ) {
+    // we are adding points to the previously constructed list
+    if (event.ctrlKey) {
+      selectionBox.endPoint.set(
+        ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+        - ( event.clientY / concGui.offsetHeight)*2+1,
+        0.5 );
+      const allSelected = selectionBox.select();
+      for ( let i = 0; i < allSelected.length; i ++ ) {
+        // filtering for points selected
+        if (allSelected[ i ].constructor.name == "Points") {
+          allSelectedPnts.push(allSelected[i])
+          //selected point is 0xFF7F00
+          allSelected[ i ].material.color.set( 0xFF7F00);
+          //console.log(allSelectedPnts)
+          //adding to table
+          let table = document.getElementById("pointData")
+          let row = document.createElement('tr');
+          let Xpnt = allSelected[ i ].geometry.attributes.position.array[0] 
+          let Ypnt = allSelected[ i ].geometry.attributes.position.array[1]
+          let Xdata = document.createElement('td')
+          let Ydata = document.createElement('td')
+          var Xinput = document.createElement("input");
+          var Yinput = document.createElement("input");
+          Xinput.type = "Number";
+          Yinput.type = "Number";
+          Xinput.value = Xpnt
+          Yinput.value = Ypnt
+          Xdata = Xinput
+          Ydata = Yinput
+          Xdata.style ="width: 50%"
+          Ydata.style ="width: 50%"
+          row.appendChild(Xdata)
+          row.appendChild(Ydata)
+          table.appendChild(row)  
+        }
+      }
   }
   else {
     //resets the points in the scene
@@ -182,20 +201,41 @@ document.addEventListener( 'pointerup', function ( event ) {
     //adding to table
     for ( const pnt of allSelectedPnts ) {
         let table = document.getElementById("pointData")
-        console.log(table)
         let row = document.createElement('tr');
         let Xpnt = pnt.geometry.attributes.position.array[0] 
         let Ypnt = pnt.geometry.attributes.position.array[1]
         let Xdata = document.createElement('td')
         let Ydata = document.createElement('td')
-        Xdata.innerHTML = Xpnt
-        Ydata.innerHTML = Ypnt
+        var Xinput = document.createElement("input");
+        var Yinput = document.createElement("input");
+        Xinput.type = "Number";
+        Yinput.type = "Number";
+        Xinput.value = Xpnt
+        Yinput.value = Ypnt
+        Xdata = Xinput
+        Ydata = Yinput
+        Xdata.style ="width: 50%"
+        Ydata.style ="width: 50%"
         row.appendChild(Xdata)
         row.appendChild(Ydata)
         table.appendChild(row)  
       }
   }
 } );
+
+  }
+  else {
+    greater_than = false
+  }  
+})
+console.log(greater_than)
+
+    
+
+
+
+
+
 
 //add a new material for each point
 function addPoint() {
