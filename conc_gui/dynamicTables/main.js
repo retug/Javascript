@@ -229,44 +229,40 @@ function addPoint() {
 var tbody = document.getElementById("pointData")
 console.log(tbody)
 //function that will update the scene point location
-tbody.onchange = function (e) {
-  e = e || window.event; // || is or
-  var data = [];
-  var target = e.srcElement || e.target;
-  while (target && target.nodeName !== "TR") {
-      target = target.parentNode;
-  }
-  if (target) {
-      var cells = target.getElementsByTagName("input");
-      var ind = target.rowIndex - 1
-      var x_pnt = cells[0].value
-      var y_pnt = cells[1].value
-      for (var i = 0; i < cells.length; i++) {
-          data.push(cells[i].value);
-      }
-  }
-  allSelectedPnts[ind].geometry.attributes.position.needsUpdate
-  allSelectedPnts[ind].geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [x_pnt,y_pnt,0], 3 ) );
-  
-  console.log(allSelectedPnts[0].geometry.attributes.position)
-  console.log(target) //target is the row
-  console.log(cells) //this is the input values
-  console.log(data)
-  console.log(x_pnt)
-  console.log(ind)
-};
 
 
 
+let frame = 0
 function animate() {
+  frame += 0.1
   var X = document.getElementById( "X_Vals" ).value;
   var Y = document.getElementById( "Y_Vals" ).value;
   //rendering the moving point on the screen, might need an id to filter
   dotGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [X,Y,0], 3 ) );
+  dot.geometry.attributes.position.needsUpdate = true;
   document.getElementById("addPointBtn").onclick = function(){
     addPoint();
   }
-
+  tbody.onchange = function (e) {
+    e = e || window.event; // || is or
+    var data = [];
+    var target = e.srcElement || e.target;
+    while (target && target.nodeName !== "TR") {
+        target = target.parentNode;
+    }
+    if (target) {
+        var cells = target.getElementsByTagName("input");
+        var ind = target.rowIndex - 1
+        var x_pnt = cells[0].value
+        var y_pnt = cells[1].value
+        for (var i = 0; i < cells.length; i++) {
+            data.push(cells[i].value);
+        }
+        allSelectedPnts[ind].geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [x_pnt,y_pnt,0], 3 ) );
+        allSelectedPnts[ind].geometry.attributes.position.needsUpdate = true;
+        console.log(allSelectedPnts[ind].geometry.attributes.position.needsUpdate = true);
+    }
+  };
   requestAnimationFrame( animate );
   renderer.render( scene, camera );
   
