@@ -169,50 +169,50 @@ if (event.ctrlKey) {
     }
   }
 }
-else {
-//resets the points in the scene
-let temptable = document.getElementById("pointData")
-temptable.innerHTML = ''
-//end reset
-selectionBox.endPoint.set(
-  ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
-  - ( event.clientY / concGui.offsetHeight)*2+1,
-  0.5 );
+  else {
+    //resets the points in the scene
+    let temptable = document.getElementById("pointData")
+    temptable.innerHTML = ''
+    //end reset
+    selectionBox.endPoint.set(
+      ((event.clientX - (window.innerWidth*1/6)) / concGui.offsetWidth)*2-1,
+      - ( event.clientY / concGui.offsetHeight)*2+1,
+      0.5 );
 
-const allSelected = selectionBox.select();
+    const allSelected = selectionBox.select();
 
-for ( let i = 0; i < allSelected.length; i ++ ) {
-  // filtering for points selected
-  if (allSelected[ i ].constructor.name == "Points") {
-    allSelectedPnts.push(allSelected[i])
-    //selected point is 0xFF7F00
-    allSelected[ i ].material.color.set( 0xFF7F00);
-    //console.log(allSelectedPnts)
-   }
-}
-//adding to table
-for ( const pnt of allSelectedPnts ) {
-    let table = document.getElementById("pointData")
-    let row = document.createElement('tr');
-    let Xpnt = pnt.geometry.attributes.position.array[0] 
-    let Ypnt = pnt.geometry.attributes.position.array[1]
-    let Xdata = document.createElement('td')
-    let Ydata = document.createElement('td')
-    var Xinput = document.createElement("input");
-    var Yinput = document.createElement("input");
-    Xinput.type = "Number";
-    Yinput.type = "Number";
-    Xinput.value = Xpnt
-    Yinput.value = Ypnt
-    Xdata = Xinput
-    Ydata = Yinput
-    Xdata.style ="width: 50%"
-    Ydata.style ="width: 50%"
-    row.appendChild(Xdata)
-    row.appendChild(Ydata)
-    table.appendChild(row)  
-  }
-}
+    for ( let i = 0; i < allSelected.length; i ++ ) {
+      // filtering for points selected
+      if (allSelected[ i ].constructor.name == "Points") {
+        allSelectedPnts.push(allSelected[i])
+        //selected point is 0xFF7F00
+        allSelected[ i ].material.color.set( 0xFF7F00);
+        //console.log(allSelectedPnts)
+      }
+    }
+    //adding to table
+    for ( const pnt of allSelectedPnts ) {
+        let table = document.getElementById("pointData")
+        let row = document.createElement('tr');
+        let Xpnt = pnt.geometry.attributes.position.array[0] 
+        let Ypnt = pnt.geometry.attributes.position.array[1]
+        let Xdata = document.createElement('td')
+        let Ydata = document.createElement('td')
+        var Xinput = document.createElement("input");
+        var Yinput = document.createElement("input");
+        Xinput.type = "Number";
+        Yinput.type = "Number";
+        Xinput.value = Xpnt
+        Yinput.value = Ypnt
+        Xdata = Xinput
+        Ydata = Yinput
+        Xdata.style ="width: 50%"
+        Ydata.style ="width: 50%"
+        row.appendChild(Xdata)
+        row.appendChild(Ydata)
+        table.appendChild(row)  
+      }
+    }
 } );    
 
 //add a new material for each point
@@ -224,13 +224,39 @@ function addPoint() {
   var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
   var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
   scene.add( tempDot );
+  
 }
 
 var tbody = document.getElementById("pointData")
 console.log(tbody)
-//function that will update the scene point location
-
-
+//function that will update the scene point location, table on left hand side of screen
+tbody.onchange = function (e) {
+  e = e || window.event; // || is or
+  var data = [];
+  var target = e.srcElement || e.target;
+  const selectionBox = new SelectionBox( camera, scene );
+  const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
+  while (target && target.nodeName !== "TR") {
+      target = target.parentNode;
+  }
+  if (target) {
+      var cells = target.getElementsByTagName("input");
+      var ind = target.rowIndex - 1
+      var x_pnt = cells[0].value
+      var y_pnt = cells[1].value
+      for (var i = 0; i < cells.length; i++) {
+          data.push(cells[i].value);
+      }
+      //must remove old point and make a new one for selection box to register update
+      scene.remove(allSelectedPnts[ind])
+      var tempDotGeo = new THREE.BufferGeometry();
+      tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [x_pnt,y_pnt,0], 3 ) );
+      var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0xFF7F00 } );
+      var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
+      scene.add( tempDot ); //adds updated position
+      allSelectedPnts[ind]=tempDot
+  }
+};
 
 let frame = 0
 function animate() {
@@ -243,28 +269,9 @@ function animate() {
   document.getElementById("addPointBtn").onclick = function(){
     addPoint();
   }
-  tbody.onchange = function (e) {
-    e = e || window.event; // || is or
-    var data = [];
-    var target = e.srcElement || e.target;
-    while (target && target.nodeName !== "TR") {
-        target = target.parentNode;
-    }
-    if (target) {
-        var cells = target.getElementsByTagName("input");
-        var ind = target.rowIndex - 1
-        var x_pnt = cells[0].value
-        var y_pnt = cells[1].value
-        for (var i = 0; i < cells.length; i++) {
-            data.push(cells[i].value);
-        }
-        allSelectedPnts[ind].geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [x_pnt,y_pnt,0], 3 ) );
-        allSelectedPnts[ind].geometry.attributes.position.needsUpdate = true;
-        console.log(allSelectedPnts[ind].geometry.attributes.position.needsUpdate = true);
-    }
-  };
+
   requestAnimationFrame( animate );
   renderer.render( scene, camera );
-  
+  console.log()
 }
 animate();
