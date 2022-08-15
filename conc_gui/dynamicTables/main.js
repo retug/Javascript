@@ -214,6 +214,34 @@ if (event.ctrlKey) {
       }
     }
 } );    
+//making Concrete Shape
+function addConcGeo() {
+  const x = 0, y = 0;
+
+  const concShape = new THREE.Shape();
+  concShape.currentPoint = allSelectedPnts[0]
+  for (const [index, pnt] of allSelectedPnts.entries()) {
+    if (index < allSelectedPnts.length-1) {
+      var x_values = pnt.geometry.attributes.position.array[0]
+      console.log(x_values)
+      
+      var starting = new THREE.Vector2(pnt.geometry.attributes.position.array[0], pnt.geometry.attributes.position.array[1])
+      console.log(starting)
+      concShape.currentPoint = starting   
+      concShape.lineTo(allSelectedPnts[index].geometry.attributes.position.array[0], allSelectedPnts[index].geometry.attributes.position.array[1])
+    }
+    else {
+      var starting = new THREE.Vector2(allSelectedPnts[index].geometry.attributes.position.array[0], allSelectedPnts[index].geometry.attributes.position.array[1])
+      concShape.currentPoint = starting
+      concShape.lineTo(allSelectedPnts[0].geometry.attributes.position.array[0], allSelectedPnts[0].geometry.attributes.position.array[1])   
+    }
+  }
+
+  const geometry = new THREE.ShapeGeometry( concShape );
+  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  const mesh = new THREE.Mesh( geometry, material ) ;
+  scene.add( mesh );
+}
 
 //add a new material for each point
 function addPoint() {
@@ -258,6 +286,8 @@ tbody.onchange = function (e) {
   }
 };
 
+
+
 let frame = 0
 function animate() {
   frame += 0.1
@@ -270,6 +300,10 @@ function animate() {
     addPoint();
   }
 
+
+  document.getElementById("addPolyBtn").onclick = function(){
+    addConcGeo();
+  }
   requestAnimationFrame( animate );
   renderer.render( scene, camera );
   console.log()
