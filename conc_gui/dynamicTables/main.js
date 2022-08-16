@@ -20,11 +20,11 @@ renderer.setPixelRatio(window.devicePixelRatio)
 //////////this the region of the dot///////////////
 var dotGeometry = new THREE.BufferGeometry();
 dotGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [0,0,0], 3 ) );
-var dotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
+var dotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x000000 } );
 
 var dot = new THREE.Points( dotGeometry, dotMaterial );
-//console.log(dot.geometry.attributes.position.array[0] )
-
+console.log(dot)
+dot.isReference = true
 scene.add( dot );
 /////////////////////////////end dot///////////////
 
@@ -102,7 +102,7 @@ document.getElementById('concGui').addEventListener( 'pointermove', function ( e
     const allSelected = selectionBox.select()
     //this is the color for when you are mouse dragging  
     for ( let i = 0; i < allSelected.length; i ++ ) {
-      if (allSelected[ i ].constructor.name == "Points") {
+      if (allSelected[ i ].constructor.name == "Points" && allSelected[i].isReference != true) {
       //selected point is 0xFF7F00
         allSelected[ i ].material.color.set( 0xFF7F00);        
       }
@@ -118,7 +118,7 @@ document.getElementById('concGui').addEventListener( 'pointermove', function ( e
       const allSelected = selectionBox.select();
       //this is the color for when you are mouse dragging  
       for ( let i = 0; i < allSelected.length; i ++ ) {
-        if (allSelected[ i ].constructor.name == "Points") {
+        if (allSelected[ i ].constructor.name == "Points" && allSelected[i].isReference != true) {
           //selected point is 0xFF7F00
           allSelected[ i ].material.color.set( 0xFF7F00);        
         }
@@ -141,7 +141,7 @@ if (event.ctrlKey) {
   const allSelected = selectionBox.select();
   for ( let i = 0; i < allSelected.length; i ++ ) {
     // filtering for points selected
-    if (allSelected[ i ].constructor.name == "Points") {
+    if (allSelected[ i ].constructor.name == "Points" && allSelected[i].isReference != true ) {
       allSelectedPnts.push(allSelected[i])
       //selected point is 0xFF7F00
       allSelected[ i ].material.color.set( 0xFF7F00);
@@ -183,7 +183,7 @@ if (event.ctrlKey) {
 
     for ( let i = 0; i < allSelected.length; i ++ ) {
       // filtering for points selected
-      if (allSelected[ i ].constructor.name == "Points") {
+      if (allSelected[ i ].constructor.name == "Points" && allSelected[i].isReference != true) {
         allSelectedPnts.push(allSelected[i])
         //selected point is 0xFF7F00
         allSelected[ i ].material.color.set( 0xFF7F00);
@@ -243,6 +243,19 @@ function addConcGeo() {
   scene.add( mesh );
 }
 
+//delete function
+document.addEventListener('keyup', function (e) {
+  if (e.key == "Delete") {
+    console.log("you pressed delete")
+    console.log(allSelectedPnts)
+    for (var pnt in allSelectedPnts) {
+      console.log(pnt)
+      scene.remove(allSelectedPnts[pnt]);
+    }
+  }
+})
+
+
 //add a new material for each point
 function addPoint() {
   var X1 = document.getElementById( "X_Vals" ).value;
@@ -252,9 +265,31 @@ function addPoint() {
   var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
   var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
   scene.add( tempDot );
-  
 }
 
+
+document.addEventListener('keydown', function (e) {
+    //replicate function, use shift key and r to trigger
+    if (e.shiftKey == true && (e.key == "R" || e.key == "r")) {
+      console.log('horray')
+      var Xreplicate =  parseFloat(prompt("What value of X"))
+      var Yreplicate =  parseFloat(prompt("What value of Y"))
+      alert( "X value = " + Xreplicate + "Y value = " + Yreplicate)
+      for ( const pnt of allSelectedPnts ) {
+          var xcurrent = pnt.geometry.attributes.position.array[0]
+          var ycurrent = pnt.geometry.attributes.position.array[1]
+          console.log(xcurrent)
+          var newX = xcurrent + Xreplicate
+          var newY = ycurrent + Yreplicate
+          var tempDotGeo = new THREE.BufferGeometry();
+          tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [newX,newY,0], 3 ) );
+          var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
+          var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
+          scene.add( tempDot ); //adds updated position
+    }
+  }
+
+  })
 var tbody = document.getElementById("pointData")
 console.log(tbody)
 //function that will update the scene point location, table on left hand side of screen
@@ -262,8 +297,6 @@ tbody.onchange = function (e) {
   e = e || window.event; // || is or
   var data = [];
   var target = e.srcElement || e.target;
-  const selectionBox = new SelectionBox( camera, scene );
-  const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
   while (target && target.nodeName !== "TR") {
       target = target.parentNode;
   }
@@ -286,8 +319,6 @@ tbody.onchange = function (e) {
   }
 };
 
-
-
 let frame = 0
 function animate() {
   frame += 0.1
@@ -299,8 +330,6 @@ function animate() {
   document.getElementById("addPointBtn").onclick = function(){
     addPoint();
   }
-
-
   document.getElementById("addPolyBtn").onclick = function(){
     addConcGeo();
   }
