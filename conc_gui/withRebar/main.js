@@ -148,6 +148,7 @@ document.getElementById('concGui').addEventListener( 'pointermove', function ( e
 
 //when you unselect the left mouse
 //#3
+
 document.getElementById('concGui').addEventListener( 'pointerup', function ( event ) {
 // we are adding points to the previously constructed list
 if (event.ctrlKey) {
@@ -241,7 +242,7 @@ if (event.ctrlKey) {
         allSelectedPnts.push(allSelected[i])
         //selected point is 0xFF7F00
         allSelected[ i ].material.color.set( 0xFF7F00);
-        //console.log(allSelectedPnts)
+        console.log(allSelectedPnts)
       }
       //this is rebar
       else if (allSelected[ i ].constructor.name == "Points" && allSelected[i].isReference != true && allSelected[i].isRebar == true) {
@@ -317,12 +318,12 @@ if (event.ctrlKey) {
         table.appendChild(row)  
       }
     }
-    }
+  }
 } );    
 //making Concrete Shape
+//circle for the rebar
+const concPattern = new THREE.TextureLoader().load( 'conc.png' );
 function addConcGeo() {
-  const x = 0, y = 0;
-
   const concShape = new THREE.Shape();
   concShape.currentPoint = allSelectedPnts[0]
   for (const [index, pnt] of allSelectedPnts.entries()) {
@@ -343,19 +344,22 @@ function addConcGeo() {
   }
 
   const geometry = new THREE.ShapeGeometry( concShape );
-  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  const material = new THREE.MeshStandardMaterial( {color: 0xE5E5E5, transparent: true,
+    opacity: 0.4 } );
   const mesh = new THREE.Mesh( geometry, material ) ;
+  console.log(mesh)
   scene.add( mesh );
 }
 
 //delete function
 document.addEventListener('keyup', function (e) {
   if (e.key == "Delete") {
-    console.log("you pressed delete")
     console.log(allSelectedPnts)
     for (var pnt in allSelectedPnts) {
-      console.log(pnt)
       scene.remove(allSelectedPnts[pnt]);
+    }
+    for (var pnt in allSelectedRebar) {
+      scene.remove(allSelectedRebar[pnt]);
     }
   }
 })
@@ -408,30 +412,47 @@ function addRebar() {
 
 document.addEventListener('keydown', function (e) {
     //replicate function, use shift key and r to trigger
+    console.log(allSelectedPnts)
     if (e.shiftKey == true && (e.key == "R" || e.key == "r")) {
-      console.log('horray')
+      
       var Xreplicate =  parseFloat(prompt("What value of X"))
       var Yreplicate =  parseFloat(prompt("What value of Y"))
       alert( "X value = " + Xreplicate + "Y value = " + Yreplicate)
+      
       for ( const pnt of allSelectedPnts ) {
-          var xcurrent = pnt.geometry.attributes.position.array[0]
-          var ycurrent = pnt.geometry.attributes.position.array[1]
-          console.log(xcurrent)
-          var newX = xcurrent + Xreplicate
-          var newY = ycurrent + Yreplicate
-          var tempDotGeo = new THREE.BufferGeometry();
-          tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [newX,newY,0], 3 ) );
-          var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
-          var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
-          scene.add( tempDot ); //adds updated position
-    }
+        var xcurrent = pnt.geometry.attributes.position.array[0]
+        var ycurrent = pnt.geometry.attributes.position.array[1]
+        console.log(xcurrent)
+        var newX = xcurrent + Xreplicate
+        var newY = ycurrent + Yreplicate
+        var tempDotGeo = new THREE.BufferGeometry();
+        tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [newX,newY,0], 3 ) );
+        var selectedDotMaterial = new THREE.PointsMaterial( { size: 0.5, color: 0x00FF00 } );
+        var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
+        scene.add( tempDot ); //adds updated position
+  }
+      for ( const pnt of allSelectedRebar ) {
+        var xcurrent = pnt.geometry.attributes.position.array[0]
+        var ycurrent = pnt.geometry.attributes.position.array[1]
+        var rebar_current = pnt.rebarSize
+        var newX = xcurrent + Xreplicate
+        var newY = ycurrent + Yreplicate
+        var tempDotGeo = new THREE.BufferGeometry();
+        tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [newX,newY,0], 3 ) );
+        var selectedDotMaterial = new THREE.PointsMaterial( { size: rebarDia[rebar_current], sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true  } );
+        selectedDotMaterial.color.setHSL( 0.0, 0.0, 0.5 );
+        var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
+        tempDot.isRebar = true
+        tempDot.rebarSize = rebar_current
+        scene.add( tempDot ); //adds updated position
+        
+      }
   }
 
   })
-var tbody = document.getElementById("pointData")
-console.log(tbody)
+
 //function that will update the scene point location, table on left hand side of screen
-tbody.onchange = function (e) {
+document.getElementById('pointData').onchange = function (e) {
   e = e || window.event; // || is or
   var data = [];
   var target = e.srcElement || e.target;
@@ -454,6 +475,37 @@ tbody.onchange = function (e) {
       var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
       scene.add( tempDot ); //adds updated position
       allSelectedPnts[ind]=tempDot
+  }
+};
+
+document.getElementById('rebarData').onchange = function (e) {
+  e = e || window.event; // || is or
+  var data = [];
+  var target = e.srcElement || e.target;
+  while (target && target.nodeName !== "TR") {
+      target = target.parentNode;
+  }
+  if (target) {
+      var cells = target.getElementsByTagName("input");
+      var ind = target.rowIndex - 1
+      var x_pnt = cells[0].value
+      var y_pnt = cells[1].value
+      var rebar_data = cells[2].value
+      for (var i = 0; i < cells.length; i++) {
+          data.push(cells[i].value);
+      }
+      //must remove old point and make a new one for selection box to register update
+      console.log(allSelectedRebar)
+      scene.remove(allSelectedRebar[ind])
+      var tempDotGeo = new THREE.BufferGeometry();
+      tempDotGeo.setAttribute( 'position', new THREE.Float32BufferAttribute( [x_pnt,y_pnt,0], 3 ) );
+      var selectedDotMaterial = new THREE.PointsMaterial( { size: rebarDia[rebar_data], sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true  } );
+      selectedDotMaterial.color.setHSL( 0.0, 0.0, 0.5 );
+      var tempDot = new THREE.Points( tempDotGeo, selectedDotMaterial );
+      tempDot.isRebar = true
+      tempDot.rebarSize = rebar_data
+      scene.add( tempDot );
+      allSelectedRebar[ind]=tempDot
   }
 };
 
