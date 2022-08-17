@@ -321,8 +321,6 @@ if (event.ctrlKey) {
   }
 } );    
 //making Concrete Shape
-//circle for the rebar
-const concPattern = new THREE.TextureLoader().load( 'conc.png' );
 function addConcGeo() {
   const concShape = new THREE.Shape();
   concShape.currentPoint = allSelectedPnts[0]
@@ -412,17 +410,16 @@ function addRebar() {
 
 document.addEventListener('keydown', function (e) {
     //replicate function, use shift key and r to trigger
-    console.log(allSelectedPnts)
     if (e.shiftKey == true && (e.key == "R" || e.key == "r")) {
       
       var Xreplicate =  parseFloat(prompt("What value of X"))
       var Yreplicate =  parseFloat(prompt("What value of Y"))
       alert( "X value = " + Xreplicate + "Y value = " + Yreplicate)
       
-      for ( const pnt of allSelectedPnts ) {
-        var xcurrent = pnt.geometry.attributes.position.array[0]
-        var ycurrent = pnt.geometry.attributes.position.array[1]
-        console.log(xcurrent)
+      //unsure why this is to be divided by 2, it works but is weird
+      for ( let i = 0; i < allSelectedPnts.length/2; i ++ ) {
+        var xcurrent = allSelectedPnts[i].geometry.attributes.position.array[0]
+        var ycurrent = allSelectedPnts[i].geometry.attributes.position.array[1]
         var newX = xcurrent + Xreplicate
         var newY = ycurrent + Yreplicate
         var tempDotGeo = new THREE.BufferGeometry();
