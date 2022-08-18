@@ -39,13 +39,13 @@
         float: left;
       }
     </style>
-  <!-- float is required to make nav bar side-by-side -->
+  
 </head>
 <body>
   <div class="flex h-screen" outline-1 >
     <div id="userResults" class="w-1/6 divide-y-2 divide-blue-400">
-      <div id="XYRebar" class="container">   
-        <div class="row">
+      <!-- This grid class is the ticket for good stacking -->
+      <div id="XYRebar" class="grid grid-cols-3">   
           <div class="column" style="background-color: rgb(92, 43, 226); width:75px">
             <h2>X</h2>
             <div class="form-example">
@@ -84,7 +84,7 @@
             </div>
           </div>
         </div>
-      </div>
+
 
       <div class="row">
         <button id="addPointBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-2 rounded">Add Point</button>
