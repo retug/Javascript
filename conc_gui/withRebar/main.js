@@ -55,7 +55,7 @@ scene.add( gridHelper );
 renderer.render( scene, camera );
 
 const selectionBox = new SelectionBox( camera, scene );
-const helper = new SelectionHelper(selectionBox, renderer, 'selectBox' );
+const helper = new SelectionHelper(renderer, 'selectBox' );
 
 //beginning comand 
 //#1
